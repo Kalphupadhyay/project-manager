@@ -1,6 +1,7 @@
 import mongoose, { Schema } from "mongoose";
-
-import { createHash } from "crypto";
+import jwt from "jsonwebtoken";
+import { createHash, randomBytes } from "crypto";
+import { IUser } from "../interfaces/user.interface";
 
 const userSchema = new Schema(
   {
@@ -14,7 +15,7 @@ const userSchema = new Schema(
         localPath: "",
       },
     },
-    userName: {
+    username: {
       type: String,
       required: true,
       unique: true,
@@ -70,4 +71,51 @@ userSchema.pre("save", function (next) {
   next();
 });
 
-export const User = mongoose.model("User", userSchema);
+userSchema.methods.isPasswordCorrect = function (password: string) {
+  const hashedPassword = createHash("sha256").update(password).digest("hex");
+
+  if (hashedPassword === this.password) {
+    return true;
+  }
+  return false;
+};
+
+userSchema.methods.generateAccessToken = function () {
+  return jwt.sign(
+    {
+      _id: this._id,
+      email: this.email,
+      username: this.userName,
+    },
+    process.env.ACCESS_TOKEN_SECRET as string,
+    {
+      expiresIn: "1d",
+    },
+  );
+};
+
+userSchema.methods.generateRefreshToken = function () {
+  return jwt.sign(
+    {
+      _id: this._id,
+    },
+    process.env.REFRESH_TOKEN_SECRET as string,
+    {
+      expiresIn: "7d",
+    },
+  );
+};
+
+userSchema.methods.generateTempToken = function () {
+  const unHashedToken = randomBytes(20).toString("hex");
+  const hashedToken = createHash("sha256").update(unHashedToken).digest("hex");
+  const tokenExpiry = Date.now() + 10 * (60 * 1000); // 10 minutes
+
+  return {
+    unHashedToken,
+    hashedToken,
+    tokenExpiry,
+  };
+};
+
+export const User = mongoose.model<IUser>("User", userSchema);
