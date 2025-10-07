@@ -112,3 +112,32 @@ export const loginUser = asyncHandler(async (req: Request, res: Response) => {
       }),
     );
 });
+
+export const logoutUser = asyncHandler(async (req: Request, res: Response) => {
+  const userId = req.user?._id;
+  const user = await User.findByIdAndUpdate(
+    userId,
+    {
+      $set: {
+        refreshToken: null,
+      },
+    },
+    {
+      new: true,
+    },
+  );
+
+  await user!.save({ validateBeforeSave: false });
+  res
+    .status(200)
+    .clearCookie("accessToken")
+    .clearCookie("refreshToken")
+    .json(
+      new ApiResponse({
+        data: null,
+        message: "User logged out successfully",
+        statusCode: 200,
+        success: true,
+      }),
+    );
+});

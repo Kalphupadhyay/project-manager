@@ -32,7 +32,7 @@ const errorHandler = (
     message: err.message,
     statusCode: err.statusCode,
     ...(process.env.NODE_ENV === "development" && { stack: err.stack }),
-    ...(err.errors.length > 0 && { errors: err.errors }),
+    ...(err.errors?.length > 0 && { errors: err.errors }),
   };
 
   res.status(err.statusCode).json(response);
