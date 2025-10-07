@@ -60,7 +60,7 @@ export const registerUser = asyncHandler(
       throw new ApiError(500, "Internal Server Error");
     }
 
-    res.send().json(
+    res.status(201).json(
       new ApiResponse({
         data: createdUser,
         message: "User registered successfully. Please verify your email",
@@ -70,3 +70,45 @@ export const registerUser = asyncHandler(
     );
   },
 );
+
+export const loginUser = asyncHandler(async (req: Request, res: Response) => {
+  const { email, password } = req.body;
+
+  if (!email || !password) {
+    throw new ApiError(400, "Email and password are required");
+  }
+
+  const user = await User.findOne({ email });
+
+  if (!user) {
+    throw new ApiError(401, "Invalid email or password");
+  }
+
+  const isPasswordCorrect = user.isPasswordCorrect(password);
+
+  if (!isPasswordCorrect) {
+    throw new ApiError(401, "Invalid email or password");
+  }
+
+  const { accessToken, refreshToken } = await generateRefreshTokenAccessToken(
+    user._id as string,
+  );
+
+  const options = {
+    httpOnly: true,
+    secure: true,
+  };
+
+  res
+    .status(200)
+    .cookie("accessToken", accessToken, options)
+    .cookie("refreshToken", refreshToken, options)
+    .json(
+      new ApiResponse({
+        data: { accessToken, refreshToken },
+        message: "User logged in successfully",
+        statusCode: 200,
+        success: true,
+      }),
+    );
+});

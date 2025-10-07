@@ -73,7 +73,7 @@ userSchema.pre("save", function (next) {
 
 userSchema.methods.isPasswordCorrect = function (password: string) {
   const hashedPassword = createHash("sha256").update(password).digest("hex");
-
+  console.log(hashedPassword, this.password);
   if (hashedPassword === this.password) {
     return true;
   }
