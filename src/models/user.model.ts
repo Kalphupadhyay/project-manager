@@ -1,8 +1,8 @@
 import mongoose, { Schema } from "mongoose";
 import jwt from "jsonwebtoken";
 import { createHash, randomBytes } from "crypto";
-import { IUser } from "../interfaces/user.interface";
-import { AvailableUserRoles } from "../utils/constants";
+import { IUser } from "../interfaces/user.interface.js";
+import { AvailableUserRoles } from "../utils/constants.js";
 
 const userSchema = new Schema(
   {

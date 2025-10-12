@@ -1,8 +1,8 @@
 import { Schema, model } from "mongoose";
-import { ITask } from "../interfaces/task.interface.js";
 import { AvailableTaskStatus } from "../utils/constants.js";
+import { ISubTask } from "../interfaces/subtask.interface.js";
 
-const taskSchema = new Schema(
+export const subTaskSchema = new Schema(
   {
     title: {
       type: String,
@@ -11,22 +11,17 @@ const taskSchema = new Schema(
     },
     description: {
       type: String,
-      required: true,
       trim: true,
-    },
-    assignee: {
-      type: Schema.Types.ObjectId,
-      ref: "User",
-      required: false,
+      required: true,
     },
     status: {
       type: String,
       enum: AvailableTaskStatus,
       default: AvailableTaskStatus[0],
     },
-    projectId: {
+    TaskId: {
       type: Schema.Types.ObjectId,
-      ref: "Project",
+      ref: "Task",
       required: true,
     },
   },
@@ -35,4 +30,4 @@ const taskSchema = new Schema(
   },
 );
 
-export const Task = model<ITask>("Task", taskSchema);
+export const SubTask = model<ISubTask>("SubTask", subTaskSchema);

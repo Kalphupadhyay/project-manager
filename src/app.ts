@@ -2,6 +2,7 @@ import express from "express";
 import cors from "cors";
 import HealthCheckRoute from "./routes/healthcheck.route.js";
 import AuthRoute from "./routes/auth.route.js";
+import ProjectRoute from "./routes/project.route.js";
 import cookieParser from "cookie-parser";
 import { errorHandler } from "./middlewares/errorHandler.middleware.js";
 const app = express();
@@ -26,6 +27,9 @@ app.use("/api/v1/healthcheck", HealthCheckRoute);
 
 // Auth routes
 app.use("/api/v1/auth", AuthRoute);
+
+// project routes
+app.use("/api/v1/projects", ProjectRoute);
 
 // Error handling middleware (must be last)
 app.use(errorHandler);

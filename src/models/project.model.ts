@@ -1,5 +1,5 @@
-import { Schema, model } from "mongoose";
-import { describe } from "node:test";
+import { Schema, model, Document } from "mongoose";
+import { IProject } from "../interfaces/project.interface.js";
 
 const projectSchema = new Schema(
   {
@@ -8,6 +8,7 @@ const projectSchema = new Schema(
       required: true,
       trim: true,
       lowercase: true,
+      unique: true,
     },
     description: {
       type: String,
@@ -25,4 +26,4 @@ const projectSchema = new Schema(
   },
 );
 
-export const Project = model("Project", projectSchema);
+export const Project = model<IProject>("Project", projectSchema);

@@ -26,7 +26,7 @@ const generateRefreshTokenAccessToken = async (userId: string) => {
 
 export const registerUser = asyncHandler(
   async (req: Request, res: Response) => {
-    const { email, username, password } = req.body;
+    const { email, username, password, role } = req.body;
 
     const existingUser = await User.findOne({
       $or: [{ email }, { username }],
@@ -40,6 +40,7 @@ export const registerUser = asyncHandler(
       email,
       username,
       password,
+      role,
     });
 
     const { hashedToken, tokenExpiry, unHashedToken } =
