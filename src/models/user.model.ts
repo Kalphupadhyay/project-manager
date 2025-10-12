@@ -2,6 +2,7 @@ import mongoose, { Schema } from "mongoose";
 import jwt from "jsonwebtoken";
 import { createHash, randomBytes } from "crypto";
 import { IUser } from "../interfaces/user.interface";
+import { AvailableUserRoles } from "../utils/constants";
 
 const userSchema = new Schema(
   {
@@ -28,6 +29,12 @@ const userSchema = new Schema(
       required: true,
       unique: true,
       lowercase: true,
+      trim: true,
+    },
+    role: {
+      type: String,
+      enum: AvailableUserRoles,
+      default: AvailableUserRoles[2],
       trim: true,
     },
     fullName: {
