@@ -36,6 +36,21 @@ export const getAllProjects = asyncHandler(
   },
 );
 
+export const getProject = asyncHandler(async (req: Request, res: Response) => {
+  const { projectId } = req.params;
+  const project = await Project.findById(projectId).populate(
+    "createdBy",
+    "email",
+  );
+  if (!project) {
+    throw new ApiError(404, "Project not found");
+  }
+  res.status(200).json({
+    success: true,
+    data: project,
+  });
+});
+
 export const updateProject = asyncHandler(
   async (req: Request, res: Response) => {
     const { projectId } = req.params;

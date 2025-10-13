@@ -3,6 +3,7 @@ import {
   createProject,
   deleteProject,
   getAllProjects,
+  getProject,
   updateProject,
 } from "../controllers/project.controller";
 import { jwtVerify } from "../middlewares/authentication.middleware";
@@ -20,6 +21,7 @@ router.post(
 );
 
 router.get("/", jwtVerify, getAllProjects);
+router.get("/:projectId", jwtVerify, getProject);
 router.put("/:projectId", jwtVerify, updateProject);
 router.delete("/:projectId", jwtVerify, deleteProject);
 
