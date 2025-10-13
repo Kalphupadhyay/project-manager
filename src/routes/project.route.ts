@@ -1,5 +1,10 @@
 import { Router } from "express";
-import { createProject } from "../controllers/project.controller";
+import {
+  createProject,
+  deleteProject,
+  getAllProjects,
+  updateProject,
+} from "../controllers/project.controller";
 import { jwtVerify } from "../middlewares/authentication.middleware";
 import { projectCreationValidator } from "../validators";
 import { validate } from "../middlewares/validator.middleware";
@@ -13,5 +18,9 @@ router.post(
   jwtVerify,
   createProject,
 );
+
+router.get("/", jwtVerify, getAllProjects);
+router.put("/:projectId", jwtVerify, updateProject);
+router.delete("/:projectId", jwtVerify, deleteProject);
 
 export default router;

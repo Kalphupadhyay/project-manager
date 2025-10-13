@@ -28,9 +28,57 @@ export const createProject = asyncHandler(
 export const getAllProjects = asyncHandler(
   async (req: Request, res: Response) => {
     const projects = await Project.find().populate("createdBy", "name email");
+
     res.status(200).json({
       success: true,
       data: projects,
+    });
+  },
+);
+
+export const updateProject = asyncHandler(
+  async (req: Request, res: Response) => {
+    const { projectId } = req.params;
+    const { name, description } = req.body;
+    const project = await Project.findById(projectId);
+
+    if (!project) {
+      throw new ApiError(404, "Project not found");
+    }
+    if (req.user.role !== "admin") {
+      throw new ApiError(403, "Only admins can update projects");
+    }
+    project.name = name || project.name;
+    project.description = description || project.description;
+    await project.save();
+    const updatedProject = await Project.findById(projectId).populate(
+      "createdBy",
+      "email",
+    );
+
+    res.status(200).json({
+      success: true,
+      data: updatedProject,
+    });
+  },
+);
+
+export const deleteProject = asyncHandler(
+  async (req: Request, res: Response) => {
+    const { projectId } = req.params;
+    const project = await Project.findById(projectId);
+
+    if (!project) {
+      throw new ApiError(404, "Project not found");
+    }
+    if (req.user.role !== "admin") {
+      throw new ApiError(403, "Only admins can delete projects");
+    }
+    await project.deleteOne();
+
+    res.status(200).json({
+      success: true,
+      message: "Project deleted successfully",
     });
   },
 );
