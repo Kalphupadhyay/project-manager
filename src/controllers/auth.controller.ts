@@ -87,13 +87,13 @@ export const loginUser = asyncHandler(async (req: Request, res: Response) => {
   const user = await User.findOne({ email });
 
   if (!user) {
-    throw new ApiError(401, "Invalid email or password");
+    throw new ApiError(400, "Invalid email or password");
   }
 
   const isPasswordCorrect = user.isPasswordCorrect(password);
 
   if (!isPasswordCorrect) {
-    throw new ApiError(401, "Invalid email or password");
+    throw new ApiError(400, "Invalid email or password");
   }
 
   const { accessToken, refreshToken } = await generateRefreshTokenAccessToken(
