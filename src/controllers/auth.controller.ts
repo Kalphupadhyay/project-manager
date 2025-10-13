@@ -1,5 +1,5 @@
 import { asyncHandler } from "../utils/async-handler.js";
-import { Request, Response } from "express";
+import { CookieOptions, Request, Response } from "express";
 import { ApiError } from "../utils/api-error.js";
 import { User } from "../models/user.model.js";
 import {
@@ -100,15 +100,24 @@ export const loginUser = asyncHandler(async (req: Request, res: Response) => {
     user._id as string,
   );
 
-  const options = {
+  const options: CookieOptions = {
     httpOnly: true,
     secure: true,
   };
 
   res
     .status(200)
-    .cookie("accessToken", accessToken, options)
-    .cookie("refreshToken", refreshToken, options)
+    .cookie("accessToken", accessToken, { ...options, maxAge: 15 * 60 * 1000 })
+    .cookie("refreshToken", refreshToken, {
+      ...options,
+      maxAge: 7 * 24 * 60 * 60 * 1000,
+    })
+    .cookie("isLoggedIn", true, {
+      ...options,
+      httpOnly: false,
+      secure: true,
+      maxAge: 7 * 24 * 60 * 60 * 1000,
+    })
     .json(
       new ApiResponse({
         data: { accessToken, refreshToken },
@@ -224,6 +233,7 @@ export const getRefreshToken = asyncHandler(
       .status(200)
       .cookie("accessToken", accessToken, options)
       .cookie("refreshToken", refreshToken, options)
+
       .json(
         new ApiResponse({
           data: { accessToken: refreshToken },
