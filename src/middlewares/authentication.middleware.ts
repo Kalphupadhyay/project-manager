@@ -25,12 +25,15 @@ export const jwtVerify = asyncHandler(
         token,
         process.env.ACCESS_TOKEN_SECRET as string,
       );
+
       const user = await User.findById(
         (decodedToken as { _id: string })._id,
       ).select(
         "-password -__v -emailVerificationToken -emailVerificationTokenExpiry -forgotPasswordToken -forgortPasswordTokenExpiry -refreshToken",
       );
+
       if (!user) {
+        console.log("User not found for the given token.");
         throw new ApiError(401, "Unauthorized request");
       }
 
