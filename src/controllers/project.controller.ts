@@ -1,5 +1,6 @@
 import { Project } from "../models/project.model";
 import { ApiError } from "../utils/api-error";
+import { ApiResponse } from "../utils/api-response";
 import { asyncHandler } from "../utils/async-handler";
 import { Request, Response } from "express";
 
@@ -29,10 +30,14 @@ export const getAllProjects = asyncHandler(
   async (req: Request, res: Response) => {
     const projects = await Project.find().populate("createdBy", "name email");
 
-    res.status(200).json({
-      success: true,
-      data: projects,
-    });
+    res.status(200).json(
+      new ApiResponse({
+        data: projects,
+        message: "Projects retrieved successfully",
+        statusCode: 200,
+        success: true,
+      }),
+    );
   },
 );
 
@@ -45,10 +50,14 @@ export const getProject = asyncHandler(async (req: Request, res: Response) => {
   if (!project) {
     throw new ApiError(404, "Project not found");
   }
-  res.status(200).json({
-    success: true,
-    data: project,
-  });
+  res.status(200).json(
+    new ApiResponse({
+      data: project,
+      message: "Project retrieved successfully",
+      statusCode: 200,
+      success: true,
+    }),
+  );
 });
 
 export const updateProject = asyncHandler(
