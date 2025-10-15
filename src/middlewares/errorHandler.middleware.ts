@@ -10,7 +10,8 @@ const errorHandler = (
 ) => {
   let err = error;
 
-  console.log(err);
+  console.log("Entering error handler middleware");
+  console.log("Error received:", error);
 
   // If it's not an ApiError, convert it
   if (!(error instanceof ApiError)) {
