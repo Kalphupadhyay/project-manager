@@ -7,8 +7,8 @@ import {
   updateProject,
 } from "../controllers/project.controller";
 import { jwtVerify } from "../middlewares/authentication.middleware";
-import { projectCreationValidator } from "../validators";
 import { validate } from "../middlewares/validator.middleware";
+import { projectCreationValidator } from "../validators/project.validator";
 
 const router = Router();
 
@@ -19,7 +19,6 @@ router.post(
   jwtVerify,
   createProject,
 );
-
 router.get("/", jwtVerify, getAllProjects);
 router.get("/:projectId", jwtVerify, getProject);
 router.put("/:projectId", jwtVerify, updateProject);

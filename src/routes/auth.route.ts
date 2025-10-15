@@ -27,9 +27,9 @@ router.get("/verify-email/:token", verifyEmail);
 router.post("/forgot-password", forgotPasswordVerification);
 router.post("/reset-password/:token", resetPassword);
 router.post("/refresh-token", getRefreshToken);
-
+router.get("/logout", logoutUser);
 // secure routes
-router.get("/logout", jwtVerify, logoutUser);
+
 router.get("/current-user", jwtVerify, getCurrentUser);
 router.post("/change-password", jwtVerify, changePassword);
 router.post("/resend-email-verification", resendEmailVerification);

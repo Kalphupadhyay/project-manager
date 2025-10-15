@@ -131,7 +131,7 @@ export const loginUser = asyncHandler(async (req: Request, res: Response) => {
 
 export const logoutUser = asyncHandler(async (req: Request, res: Response) => {
   const userId = req.user?._id;
-  const user = await User.findByIdAndUpdate(
+  await User.findByIdAndUpdate(
     userId,
     {
       $set: {
@@ -142,11 +142,7 @@ export const logoutUser = asyncHandler(async (req: Request, res: Response) => {
       new: true,
     },
   );
-  if (!user) {
-    throw new ApiError(404, "User not found");
-  }
 
-  await user.save({ validateBeforeSave: false });
   res
     .status(200)
     .clearCookie("accessToken")

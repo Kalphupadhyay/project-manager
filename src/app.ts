@@ -5,6 +5,7 @@ import AuthRoute from "./routes/auth.route.js";
 import ProjectRoute from "./routes/project.route.js";
 import cookieParser from "cookie-parser";
 import dotenv from "dotenv";
+import TaskRoute from "./routes/task.route.js";
 import { errorHandler } from "./middlewares/errorHandler.middleware.js";
 const app = express();
 
@@ -15,8 +16,6 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(express.static("public"));
 app.use(cookieParser());
-
-console.log("CORS_ORIGIN:", process.env.CORS_ORIGIN);
 
 app.use(
   cors({
@@ -35,6 +34,8 @@ app.use("/api/v1/auth", AuthRoute);
 
 // project routes
 app.use("/api/v1/projects", ProjectRoute);
+
+app.use("/api/v1/tasks", TaskRoute);
 
 // Error handling middleware (must be last)
 app.use(errorHandler);
