@@ -208,56 +208,53 @@ export const changePassword = asyncHandler(
 
 export const getRefreshToken = asyncHandler(
   async (req: Request, res: Response) => {
-    const oldRefreshToken = req.cookies.refreshToken || req.body.refreshToken;
+    const oldRefreshToken = req.cookies?.refreshToken || req.body?.refreshToken;
 
     if (!oldRefreshToken) {
       throw new ApiError(401, "Refresh token is required");
     }
-    try {
-      const decodedRefreshToken = jwt.verify(
-        oldRefreshToken,
-        process.env.REFRESH_TOKEN_SECRET as string,
-      );
 
-      var userId = (decodedRefreshToken as { _id: string })._id;
+    const decodedRefreshToken = jwt.verify(
+      oldRefreshToken,
+      process.env.REFRESH_TOKEN_SECRET as string,
+    );
 
-      const user = await User.findById(userId).select(
-        "-password -__v -emailVerificationToken -emailVerificationTokenExpiry -forgotPasswordToken -forgortPasswordTokenExpiry -refreshToken",
-      );
+    var userId = (decodedRefreshToken as { _id: string })._id;
 
-      if (!user) {
-        throw new ApiError(401, "Invalid refresh token");
-      }
+    const user = await User.findById(userId).select(
+      "-password -__v -emailVerificationToken -emailVerificationTokenExpiry -forgotPasswordToken -forgortPasswordTokenExpiry",
+    );
 
-      if (user.refreshToken !== oldRefreshToken) {
-        throw new ApiError(401, "Refesh token expired");
-      }
-
-      let { refreshToken, accessToken } = await generateRefreshTokenAccessToken(
-        userId as string,
-      );
-      user.refreshToken = refreshToken;
-      await user.save();
-
-      const options = {
-        httpOnly: true,
-        secure: true,
-      };
-      res
-        .status(200)
-        .cookie("accessToken", accessToken, options)
-        .cookie("refreshToken", refreshToken, options)
-        .json(
-          new ApiResponse({
-            data: { accessToken: refreshToken, user },
-            message: "Access token generated successfully",
-            statusCode: 200,
-            success: true,
-          }),
-        );
-    } catch (error) {
+    if (!user) {
       throw new ApiError(401, "Invalid refresh token");
     }
+
+    if (user.refreshToken !== oldRefreshToken) {
+      throw new ApiError(401, "Refesh token expired");
+    }
+
+    let { refreshToken, accessToken } = await generateRefreshTokenAccessToken(
+      userId as string,
+    );
+    user.refreshToken = refreshToken;
+    await user.save();
+
+    const options = {
+      httpOnly: true,
+      secure: true,
+    };
+    res
+      .status(200)
+      .cookie("accessToken", accessToken, options)
+      .cookie("refreshToken", refreshToken, options)
+      .json(
+        new ApiResponse({
+          data: { accessToken: refreshToken, user },
+          message: "Access token generated successfully",
+          statusCode: 200,
+          success: true,
+        }),
+      );
   },
 );
 
