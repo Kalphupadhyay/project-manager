@@ -10,6 +10,8 @@ const errorHandler = (
 ) => {
   let err = error;
 
+  console.log(err);
+
   // If it's not an ApiError, convert it
   if (!(error instanceof ApiError)) {
     const statusCode = error.statusCode || 500;
